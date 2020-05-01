@@ -97,6 +97,65 @@ const movies = {
   },
 };
 
+
+class MovieList extends Component { 
+  sortMovies() {
+    let tempList = []
+    profiles.map((profile) => {
+      tempList.push(profile.favoriteMovieID)
+    })
+    const movieList = tempList.reduce((unique, item) => {
+      return unique.includes(item) ? unique : [...unique, item]
+    }, [])
+    return movieList
+  }
+  render() {
+    return (
+      <div>
+        {Object.values(movies).map((movie) => (
+          <MovieItem key={movie.id} movie={movie} profile={profiles}/>
+        ))}
+        {Object.keys(movies)}
+      </div>
+    )
+  }
+}
+
+class MovieItem extends Component {
+  assignProfiles() {
+    let userList = []
+    profiles.forEach( item => {
+      if(item.favoriteMovieID == this.props.movie.id) {
+        userList.push(item)
+      }
+    })
+    return userList
+  }
+  render() {
+    let introText = "";
+    if(this.assignProfiles().length > 0) {
+      introText = 'Liked by:'
+    } else {
+      introText = 'None of the users liked this movie'
+    }
+    return(
+      <div>
+        <h2>
+          {this.props.movie.name}
+        </h2>
+        <p>{introText}</p>
+        <ul>
+          {this.assignProfiles().map(item => {
+            return(
+              <li key={users[item.userID].name}>{users[item.userID].name}</li>
+            )
+          })}
+        </ul>
+      </div>
+    )
+  }
+}
+
 class App extends Component {
   render() {
     return (
@@ -106,6 +165,7 @@ class App extends Component {
           <h1 className="App-title">ReactND - Coding Practice</h1>
         </header>
         <h2>How Popular is Your Favorite Movie?</h2>
+        <MovieList profiles={profiles}/>
       </div>
     );
   }
